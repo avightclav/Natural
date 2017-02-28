@@ -4,15 +4,16 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import static java.lang.Math.negateExact;
 import static java.lang.Math.pow;
 
 /**
  * Created by avigh_000 on 2/14/2017.
  */
-public class Natural {
+public class Natural implements Comparable {
     private static final int NUMERALS_IN_CELL = 5;
 
-    final int[] mag;
+    private final int[] mag;
 
     public Natural(String s) {
         final int len = s.length();
@@ -64,7 +65,11 @@ public class Natural {
     }
 
     public Natural(int Int) {
-        mag = new Natural(Integer.toString(Int)).mag;
+        this(Integer.toString(Int));
+    }
+
+    private Natural(int[] mag) {
+        this.mag = mag;
     }
 
     public Natural plus(Natural other) {
@@ -96,7 +101,7 @@ public class Natural {
         }
 
         if (sum / div > 0) {
-            int[] exResult = new int[result.length+1];
+            int[] exResult = new int[result.length + 1];
             System.arraycopy(result, 0, exResult, 1, result.length);
             exResult[0] = 1;
             return exResult;
@@ -106,8 +111,51 @@ public class Natural {
 
     }
 
-    private Natural(int[] mag) {
-        this.mag = mag;
+    public Natural minus(Natural other) {
+        if (this.mag[0] == 0) throw new IllegalArgumentException("The result is \n -" + other.toString() + "\n" +
+                "but I can't store it \n");
+        int cmp = this.compareTo(other);
+        if (cmp == 0) return new Natural(0);
+        if (cmp > 0) return new Natural(minus(this.mag, other.mag));
+        else throw new IllegalArgumentException();
+    }
+
+    private static int[] minus(int[] big, int[] little) {
+        int bigIndex = big.length;
+        int littleIndex = little.length;
+        int[] result = new int[bigIndex];
+        int difference = 0;
+        final int borrow = (int) pow(10.0, NUMERALS_IN_CELL);
+        boolean isMore = true;
+
+        while (littleIndex > 0) {
+            if (!isMore) big[bigIndex - 1] -= 1;
+            isMore = big[--bigIndex] >= little[--littleIndex];
+            difference = (isMore ? 0 : borrow) + big[bigIndex] - little[littleIndex];
+            result[bigIndex] = difference;
+        }
+
+        while (bigIndex > 0 && !isMore)
+            isMore = !((result[--bigIndex] = big[bigIndex] - 1) == -1);
+
+        while (bigIndex > 0)
+            result[--bigIndex] = big[bigIndex];
+
+        return deleteZeros(result);
+    }
+
+    private static int[] deleteZeros(int[] arr) {
+        if (arr[0] == 0 && arr.length > 0) {
+            int i = 0;
+            while (arr[i] == 0) i++;
+
+            int len = arr.length - i;
+            int[] result = new int[len];
+
+            System.arraycopy(arr, i, result, 0, len);
+
+            return result;
+        } else return arr;
     }
 
     @Override
@@ -120,8 +168,17 @@ public class Natural {
             return "[]";
 
         StringBuilder b = new StringBuilder();
-        for (int f: mag) {
+        boolean first = true;
+
+        for (int f : mag) {
             b.append(f);
+            if (Integer.toString(f).length() != NUMERALS_IN_CELL && !first) {
+                for (int zeroCounts = NUMERALS_IN_CELL - Integer.toString(f).length();
+                     zeroCounts > 0; zeroCounts--) {
+                    b.append("0");
+                }
+            }
+            first = false;
         }
         return b.toString();
     }
@@ -141,4 +198,19 @@ public class Natural {
         return Arrays.hashCode(mag) * 67;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        if (this.equals(o)) return 0;
+        if (o instanceof Natural) {
+            int lenN = this.mag.length;
+            int lenO = ((Natural) o).mag.length;
+            if (lenN > lenO) return 1;
+            else if (lenN < lenO) return -1;
+            else {
+                int i = 0;
+                while (this.mag[i] == ((Natural) o).mag[i]) i++;
+                if (this.mag[i] > ((Natural) o).mag[i]) return 1; else return -1;
+            }
+        } else throw new IllegalArgumentException();
+    }
 }

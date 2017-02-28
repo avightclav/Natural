@@ -10,7 +10,7 @@ import static java.lang.Math.pow;
 /**
  * Created by avigh_000 on 2/14/2017.
  */
-public class Natural implements Comparable {
+public class Natural implements Comparable<Natural> {
     private static final int NUMERALS_IN_CELL = 5;
 
     private final int[] mag;
@@ -199,7 +199,7 @@ public class Natural implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Natural o) {
         if (this.equals(o)) return 0;
         if (o instanceof Natural) {
             int lenN = this.mag.length;

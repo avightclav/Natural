@@ -13,8 +13,6 @@ class NaturalTest {
         assertEquals("1234567890", new Natural("1234567890").toString());
         assertEquals("1234567890", new Natural("0000001234567890").toString());
         assertEquals("123456789033", new Natural("123456789033").toString());
-
-
         assertThrows(NumberFormatException.class, () -> new Natural("890s081"));
     }
 
@@ -36,6 +34,7 @@ class NaturalTest {
         assertEquals(new Natural("1"), new Natural("123456789987654321").minus(new Natural("123456789987654320")));
         assertEquals(new Natural("99900000000000"), new Natural("99999999999999").minus(new Natural("99999999999")));
         assertEquals(new Natural("88888888888"), new Natural("99999999999").minus(new Natural("11111111111")));
+        assertThrows(IllegalArgumentException.class, () -> new Natural("0").minus(new Natural("11111111111")));
     }
 
     @Test

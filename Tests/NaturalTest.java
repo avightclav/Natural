@@ -62,4 +62,14 @@ class NaturalTest {
         assertEquals(-1, new Natural("899999999999999999999999999999")
                 .compareTo(new Natural("929999999999999999999999999999")));
     }
+
+    @Test
+    void multiply() {
+        assertEquals("9999961711036578", new Natural("9999981711").multiply(new Natural(999998)).toString());
+        assertEquals("999966342513078043304412675042",
+                new Natural("999978171136578").multiply(new Natural("999988171118289")).toString());
+        assertEquals("999988171118289", new Natural("9999981711").multiply(new Natural(99999)).toString());
+        assertEquals("9999800001", new Natural(99999).multiply(new Natural(99999)).toString());
+        assertEquals("999966342513078043304412675042", new Natural("999978171136578").multiply(new Natural("999988171118289")).toString());
+    }
 }

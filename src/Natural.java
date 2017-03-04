@@ -1,10 +1,8 @@
-import com.sun.xml.internal.bind.v2.TODO;
-
-import java.lang.reflect.Array;
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 
-import static java.lang.Math.negateExact;
 import static java.lang.Math.pow;
 
 /**
@@ -144,10 +142,11 @@ public class Natural implements Comparable<Natural> {
         return deleteZeros(result);
     }
 
+
     private static int[] deleteZeros(int[] arr) {
         if (arr[0] == 0 && arr.length > 0) {
             int i = 0;
-            while (arr[i] == 0) i++;
+            while (i != arr.length && arr[i] == 0) i++;
 
             int len = arr.length - i;
             int[] result = new int[len];
@@ -156,6 +155,39 @@ public class Natural implements Comparable<Natural> {
 
             return result;
         } else return arr;
+    }
+
+    public Natural multiply(Natural other) {
+        final int len = this.mag.length;
+        final int lenOther = other.mag.length;
+
+        if (len >= lenOther) return new Natural(multiply(this.mag, other.mag));
+        else return new Natural(multiply(other.mag, this.mag));
+    }
+
+    private static int[] multiply(int[] x, int[] y) {
+        int xIndex = x.length;
+        int yIndex = y.length;
+        long[] result = new long[xIndex + yIndex];
+        final int div = (int) pow(10, NUMERALS_IN_CELL);
+        long carry = 0;
+
+        while (yIndex > 0) {
+            xIndex = x.length;
+            --yIndex;
+            carry = 0;
+            while (xIndex > 0) {
+                int index = xIndex + yIndex;
+                result[index] += ((long) x[--xIndex]) * ((long) y[yIndex]) + carry;
+                carry = result[index] / div;
+                result[index] %= div;
+
+            }
+            result[yIndex] += carry;
+        }
+
+        int[] fResult = Arrays.stream(result).asDoubleStream().mapToInt(w -> (int) w).toArray();
+        return deleteZeros(fResult);
     }
 
     @Override
@@ -171,13 +203,13 @@ public class Natural implements Comparable<Natural> {
         boolean first = true;
 
         for (int f : mag) {
-            b.append(f);
             if (Integer.toString(f).length() != NUMERALS_IN_CELL && !first) {
                 for (int zeroCounts = NUMERALS_IN_CELL - Integer.toString(f).length();
                      zeroCounts > 0; zeroCounts--) {
                     b.append("0");
                 }
             }
+            b.append(f);
             first = false;
         }
         return b.toString();
@@ -209,8 +241,13 @@ public class Natural implements Comparable<Natural> {
             else {
                 int i = 0;
                 while (this.mag[i] == ((Natural) o).mag[i]) i++;
-                if (this.mag[i] > ((Natural) o).mag[i]) return 1; else return -1;
+                if (this.mag[i] > ((Natural) o).mag[i]) return 1;
+                else return -1;
             }
         } else throw new IllegalArgumentException();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(5463463 % 10000);
     }
 }

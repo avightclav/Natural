@@ -3,7 +3,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static java.lang.Math.round;
 
 /**
  * Created by avigh_000 on 2/14/2017.
@@ -71,7 +73,7 @@ public class Natural implements Comparable<Natural> {
     }
 
     public Natural plus(Natural other) {
-        return new Natural(plus(mag, other.mag));
+        return new Natural(plus(mag.clone(), other.mag.clone()));
     }
 
     private static int[] plus(int[] x, int[] y) {
@@ -114,8 +116,9 @@ public class Natural implements Comparable<Natural> {
                 "but I can't store it \n");
         int cmp = this.compareTo(other);
         if (cmp == 0) return new Natural(0);
-        if (cmp > 0) return new Natural(minus(this.mag, other.mag));
-        else throw new IllegalArgumentException();
+        if (cmp > 0) return new Natural(minus(this.mag.clone(), other.mag.clone()));
+        else
+            throw new IllegalArgumentException("-" + new Natural(minus(other.mag.clone(), this.mag.clone())).toString());
     }
 
     private static int[] minus(int[] big, int[] little) {
@@ -161,8 +164,8 @@ public class Natural implements Comparable<Natural> {
         final int len = this.mag.length;
         final int lenOther = other.mag.length;
 
-        if (len >= lenOther) return new Natural(multiply(this.mag, other.mag));
-        else return new Natural(multiply(other.mag, this.mag));
+        if (len >= lenOther) return new Natural(multiply(this.mag.clone(), other.mag.clone()));
+        else return new Natural(multiply(other.mag.clone(), this.mag.clone()));
     }
 
     private static int[] multiply(int[] x, int[] y) {
@@ -172,22 +175,86 @@ public class Natural implements Comparable<Natural> {
         final int div = (int) pow(10, NUMERALS_IN_CELL);
         long carry = 0;
 
-        while (yIndex > 0) {
+        for (int i = yIndex - 1; i >= 0; i--) {
             xIndex = x.length;
-            --yIndex;
             carry = 0;
             while (xIndex > 0) {
-                int index = xIndex + yIndex;
-                result[index] += ((long) x[--xIndex]) * ((long) y[yIndex]) + carry;
+                int index = xIndex + i;
+                result[index] += ((long) x[--xIndex]) * ((long) y[i]) + carry;
                 carry = result[index] / div;
                 result[index] %= div;
 
             }
-            result[yIndex] += carry;
+            result[i] += carry;
         }
 
         int[] fResult = Arrays.stream(result).asDoubleStream().mapToInt(w -> (int) w).toArray();
         return deleteZeros(fResult);
+    }
+
+    public Natural divide(Natural other) {
+        final int xIndex = this.mag.length;
+        final int yIndex = other.mag.length;
+
+        StringBuilder sb = new StringBuilder();
+        int[] partArr = new int[yIndex];
+        System.arraycopy(this.mag, 0, partArr, 0, yIndex);
+        Natural part = new Natural(partArr);
+        if (part.compareTo(other) < 0) {
+            part = part.addDigit(this, yIndex);
+            partArr = part.mag;
+        }
+        Natural remainder = new Natural(0);
+
+
+        for (int i = partArr.length; i <= xIndex; ) {
+
+            boolean isQuotient = false;
+            int quotient = (int) ((pow(10, NUMERALS_IN_CELL + 1) - 1) / 2);
+            double tmp = quotient;
+
+            while (!isQuotient) {
+                tmp /= 2;
+                isQuotient = (part.compareTo(new Natural(quotient).multiply(other)) >= 0) &&
+                        (part.minus(new Natural(quotient).multiply(other)).compareTo(other) < 0);
+                if (isQuotient) {
+                    sb = sb.append(quotient);
+                } else {
+                    if (part.compareTo(new Natural(quotient).multiply(other)) > 0) {
+                        quotient += round(tmp);
+                    } else {
+                        quotient -= round(tmp);
+                    }
+                }
+
+            }
+            remainder = part.minus(new Natural(quotient).multiply(other));
+            if (i == xIndex) break;
+            partArr = remainder.addDigit(this, i++).mag;
+            part = new Natural(partArr);
+            while (part.compareTo(other) < 0) {
+                remainder = part.minus(new Natural(quotient).multiply(other));
+                partArr = remainder.addDigit(this, i++).mag;
+                part = new Natural(partArr);
+                sb = sb.append("0");
+            }
+        }
+        if (remainder.equals(new Natural(0))) {
+            return new Natural(sb.toString());
+        } else {
+            throw new IllegalArgumentException("Can't implement integer division \n" +
+                    "but the result is: \n" +
+                    new Natural(sb.toString()) + " " + remainder + "/" + other);
+        }
+    }
+
+    private Natural addDigit(Natural other, int pos) {
+        int[] digit = {other.mag[pos]};
+        final int index = this.mag.length;
+        int[] result = new int[index + 1];
+        System.arraycopy(this.mag, 0, result, 0, index);
+        System.arraycopy(digit, 0, result, index, 1);
+        return new Natural(result);
     }
 
     @Override
@@ -200,17 +267,17 @@ public class Natural implements Comparable<Natural> {
             return "[]";
 
         StringBuilder b = new StringBuilder();
-        boolean first = true;
 
-        for (int f : mag) {
-            if (Integer.toString(f).length() != NUMERALS_IN_CELL && !first) {
-                for (int zeroCounts = NUMERALS_IN_CELL - Integer.toString(f).length();
+        b.append(this.mag[0]);
+
+        for (int i = 1; i < this.mag.length; i++) {
+            if (Integer.toString(this.mag[i]).length() != NUMERALS_IN_CELL) {
+                for (int zeroCounts = NUMERALS_IN_CELL - Integer.toString(this.mag[i]).length();
                      zeroCounts > 0; zeroCounts--) {
                     b.append("0");
                 }
             }
-            b.append(f);
-            first = false;
+            b.append(this.mag[i]);
         }
         return b.toString();
     }

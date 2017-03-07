@@ -72,4 +72,12 @@ class NaturalTest {
         assertEquals("9999800001", new Natural(99999).multiply(new Natural(99999)).toString());
         assertEquals("999966342513078043304412675042", new Natural("999978171136578").multiply(new Natural("999988171118289")).toString());
     }
+
+    @Test
+    void divide() {
+        Natural nat1 = new Natural("1254236236252345436346").multiply(new Natural("2423236346534634325345346"));
+        assertEquals("1254236236252345436346", nat1.divide(new Natural("2423236346534634325345346")).toString());
+        assertEquals("268", (new Natural(536).divide(new Natural(2)).toString()));
+
+    }
 }

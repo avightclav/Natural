@@ -1,4 +1,5 @@
 import java.util.Arrays;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.round;
 
@@ -133,12 +134,15 @@ public class Natural implements Comparable<Natural> {
             result[bigIndex] = difference;
         }
 
-        while (bigIndex > 0 && !isMore)
-            isMore = !((result[--bigIndex] = big[bigIndex] - 1) == -1);
+        while (bigIndex > 0 && !isMore) {
+            --bigIndex;
+            isMore = !((result[bigIndex] = big[bigIndex] - 1) == -1);
+        }
 
-        while (bigIndex > 0)
-            result[--bigIndex] = big[bigIndex];
-
+        while (bigIndex > 0) {
+            --bigIndex;
+            result[bigIndex] = big[bigIndex];
+        }
         return deleteZeros(result);
     }
 

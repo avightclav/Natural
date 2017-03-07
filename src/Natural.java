@@ -89,10 +89,12 @@ public class Natural implements Comparable<Natural> {
         }
 
         while ((xIndex > 0) && (sum / div > 0)) {
-            result[--xIndex] = x[xIndex] + sum / div;
+            --xIndex;
+            result[xIndex] = x[xIndex] + sum / div;
         }
         while (xIndex > 0) {
-            result[--xIndex] = x[xIndex];
+            --xIndex;
+            result[xIndex] = x[xIndex];
         }
 
         if (sum / div > 0) {

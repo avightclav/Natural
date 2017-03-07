@@ -78,6 +78,7 @@ class NaturalTest {
         Natural nat1 = new Natural("1254236236252345436346").multiply(new Natural("2423236346534634325345346"));
         assertEquals("1254236236252345436346", nat1.divide(new Natural("2423236346534634325345346")).toString());
         assertEquals("268", (new Natural(536).divide(new Natural(2)).toString()));
+        assertEquals("3626166296965", new Natural("1252345346593794789235235").divide(new Natural("345363462134")).toString());
 
     }
 }

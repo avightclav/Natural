@@ -242,13 +242,7 @@ public class Natural implements Comparable<Natural> {
                 sb = sb.append("0");
             }
         }
-        if (remainder.equals(new Natural(0))) {
             return new Natural(sb.toString());
-        } else {
-            throw new IllegalArgumentException("Can't implement integer division \n" +
-                    "but the result is: \n" +
-                    new Natural(sb.toString()) + " " + remainder + "/" + other);
-        }
     }
 
     private Natural addDigit(Natural other, int pos) {

@@ -194,6 +194,8 @@ public class Natural implements Comparable<Natural> {
     }
 
     public Natural divide(Natural other) {
+        if (other.equals(new Natural(0))) throw new IllegalArgumentException();
+        if (other.equals(new Natural(1))) return this;
         final int xIndex = this.mag.length;
         final int yIndex = other.mag.length;
 

@@ -69,7 +69,7 @@ public class Natural implements Comparable<Natural> {
     }
 
     public Natural plus(Natural other) {
-        return new Natural(plus(mag.clone(), other.mag.clone()));
+        return new Natural(plus(mag, other.mag));
     }
 
     private static int[] plus(int[] x, int[] y) {
@@ -114,9 +114,9 @@ public class Natural implements Comparable<Natural> {
                 "but I can't store it \n");
         int cmp = this.compareTo(other);
         if (cmp == 0) return new Natural(0);
-        if (cmp > 0) return new Natural(minus(this.mag.clone(), other.mag.clone()));
+        if (cmp > 0) return new Natural(minus(this.mag, other.mag));
         else
-            throw new IllegalArgumentException("-" + new Natural(minus(other.mag.clone(), this.mag.clone())).toString());
+            throw new IllegalArgumentException("-" + new Natural(minus(other.mag, this.mag)).toString());
     }
 
     private static int[] minus(int[] big, int[] little) {
@@ -128,15 +128,15 @@ public class Natural implements Comparable<Natural> {
         boolean isMore = true;
 
         while (littleIndex > 0) {
-            if (!isMore) big[bigIndex - 1] -= 1;
+            if (!isMore) result[bigIndex - 1] -= 1;
             isMore = big[--bigIndex] >= little[--littleIndex];
             difference = (isMore ? 0 : borrow) + big[bigIndex] - little[littleIndex];
-            result[bigIndex] = difference;
+            result[bigIndex] += difference;
         }
 
         while (bigIndex > 0 && !isMore) {
             --bigIndex;
-            isMore = !((result[bigIndex] = big[bigIndex] - 1) == -1);
+            isMore = !(result[bigIndex]  == -1);
         }
 
         while (bigIndex > 0) {

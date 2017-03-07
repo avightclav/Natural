@@ -165,8 +165,8 @@ public class Natural implements Comparable<Natural> {
         final int len = this.mag.length;
         final int lenOther = other.mag.length;
 
-        if (len >= lenOther) return new Natural(multiply(this.mag.clone(), other.mag.clone()));
-        else return new Natural(multiply(other.mag.clone(), this.mag.clone()));
+        if (len >= lenOther) return new Natural(multiply(this.mag, other.mag));
+        else return new Natural(multiply(other.mag, this.mag));
     }
 
     private static int[] multiply(int[] x, int[] y) {

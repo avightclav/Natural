@@ -301,18 +301,17 @@ public class Natural implements Comparable<Natural> {
     @Override
     public int compareTo(Natural o) {
         if (this.equals(o)) return 0;
-        if (o instanceof Natural) {
-            int lenN = this.mag.length;
-            int lenO = ((Natural) o).mag.length;
-            if (lenN > lenO) return 1;
-            else if (lenN < lenO) return -1;
-            else {
-                int i = 0;
-                while (this.mag[i] == ((Natural) o).mag[i]) i++;
-                if (this.mag[i] > ((Natural) o).mag[i]) return 1;
-                else return -1;
-            }
-        } else throw new IllegalArgumentException();
+        int lenN = this.mag.length;
+        int lenO = ((Natural) o).mag.length;
+        if (lenN > lenO) return 1;
+        else if (lenN < lenO) return -1;
+        else {
+            int i = 0;
+            while (this.mag[i] == ((Natural) o).mag[i]) i++;
+            if (this.mag[i] > ((Natural) o).mag[i]) return 1;
+            else return -1;
+
+        }
     }
 
     public static void main(String[] args) {

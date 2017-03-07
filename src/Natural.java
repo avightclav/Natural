@@ -189,7 +189,7 @@ public class Natural implements Comparable<Natural> {
             result[i] += carry;
         }
 
-        int[] fResult = Arrays.stream(result).asDoubleStream().mapToInt(w -> (int) w).toArray();
+        int[] fResult = Arrays.stream(result).mapToInt(w -> (int) w).toArray();
         return deleteZeros(fResult);
     }
 

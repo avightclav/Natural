@@ -272,8 +272,9 @@ public class Natural implements Comparable<Natural> {
         b.append(this.mag[0]);
 
         for (int i = 1; i < this.mag.length; i++) {
-            if (Integer.toString(this.mag[i]).length() != NUMERALS_IN_CELL) {
-                for (int zeroCounts = NUMERALS_IN_CELL - Integer.toString(this.mag[i]).length();
+            int length = Integer.toString(this.mag[i]).length();
+            if (length != NUMERALS_IN_CELL) {
+                for (int zeroCounts = NUMERALS_IN_CELL - length;
                      zeroCounts > 0; zeroCounts--) {
                     b.append("0");
                 }
@@ -312,9 +313,5 @@ public class Natural implements Comparable<Natural> {
             else return -1;
 
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(5463463 % 10000);
     }
 }

@@ -82,7 +82,7 @@ public class Natural implements Comparable<Natural> {
         int xIndex = x.length;
         int yIndex = y.length;
         int[] result = new int[xIndex];
-        final int div = (int) pow(10.0, NUMERALS_IN_CELL);
+        final int div = pow(10, NUMERALS_IN_CELL);
         int sum = 0;
         while (yIndex > 0) {
             sum = x[--xIndex] + y[--yIndex] + sum / div;
@@ -124,7 +124,7 @@ public class Natural implements Comparable<Natural> {
         int littleIndex = little.length;
         int[] result = new int[bigIndex];
         int difference = 0;
-        final int borrow = (int) pow(10.0, NUMERALS_IN_CELL);
+        final int borrow = pow(10, NUMERALS_IN_CELL);
         boolean isMore = true;
 
         while (littleIndex > 0) {
@@ -150,7 +150,7 @@ public class Natural implements Comparable<Natural> {
     private static int[] deleteZeros(int[] arr) {
         if (arr[0] == 0 && arr.length > 0) {
             int i = 0;
-            while (i != arr.length && arr[i] == 0) i++;
+            while (i != arr.length-1 && arr[i] == 0) i++;
 
             int len = arr.length - i;
             int[] result = new int[len];
@@ -173,7 +173,7 @@ public class Natural implements Comparable<Natural> {
         int xIndex = x.length;
         int yIndex = y.length;
         long[] result = new long[xIndex + yIndex];
-        final int div = (int) pow(10, NUMERALS_IN_CELL);
+        final int div = pow(10, NUMERALS_IN_CELL);
         long carry = 0;
 
         for (int i = yIndex - 1; i >= 0; i--) {
@@ -194,6 +194,7 @@ public class Natural implements Comparable<Natural> {
     }
 
     public Natural divide(Natural other) {
+        if (this.equals(new Natural(0))) return new Natural("0");
         if (other.equals(new Natural(0))) throw new IllegalArgumentException();
         if (other.equals(new Natural(1))) return this;
         final int xIndex = this.mag.length;
@@ -213,7 +214,7 @@ public class Natural implements Comparable<Natural> {
         for (int i = partArr.length; i <= xIndex; ) {
 
             boolean isQuotient = false;
-            int quotient = (int) ((pow(10, NUMERALS_IN_CELL + 1) - 1) / 2);
+            int quotient = ((pow(10, NUMERALS_IN_CELL + 1) - 1) / 2);
             double tmp = quotient;
 
             while (!isQuotient) {
@@ -253,6 +254,15 @@ public class Natural implements Comparable<Natural> {
         System.arraycopy(digit, 0, result, index, 1);
         return new Natural(result);
     }
+
+    private static int pow(int a, int b) {
+        int result = 1;
+        for (int i = 0; i != b; i++) {
+            result *= a;
+        }
+        return result;
+    }
+
 
     @Override
     public String toString() {

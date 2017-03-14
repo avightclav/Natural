@@ -247,11 +247,11 @@ public class Natural implements Comparable<Natural> {
     }
 
     private Natural addDigit(Natural other, int pos) {
-        int[] digit = {other.mag[pos]};
+        int digit = other.mag[pos];
         final int index = this.mag.length;
         int[] result = new int[index + 1];
         System.arraycopy(this.mag, 0, result, 0, index);
-        System.arraycopy(digit, 0, result, index, 1);
+        result[index] = digit;
         return new Natural(result);
     }
 

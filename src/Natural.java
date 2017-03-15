@@ -85,7 +85,9 @@ public class Natural implements Comparable<Natural> {
         final int div = pow(10, NUMERALS_IN_CELL);
         int sum = 0;
         while (yIndex > 0) {
-            sum = x[--xIndex] + y[--yIndex] + sum / div;
+            --xIndex;
+            --yIndex;
+            sum = x[xIndex] + y[yIndex] + sum / div;
             result[xIndex] = sum % div;
         }
 
@@ -129,7 +131,9 @@ public class Natural implements Comparable<Natural> {
 
         while (littleIndex > 0) {
             if (!isMore) result[bigIndex - 1] -= 1;
-            isMore = big[--bigIndex] >= little[--littleIndex];
+            --bigIndex;
+            --littleIndex;
+            isMore = big[bigIndex] >= little[littleIndex];
             difference = (isMore ? 0 : borrow) + big[bigIndex] - little[littleIndex];
             result[bigIndex] += difference;
         }
@@ -181,7 +185,8 @@ public class Natural implements Comparable<Natural> {
             carry = 0;
             while (xIndex > 0) {
                 int index = xIndex + i;
-                result[index] += ((long) x[--xIndex]) * ((long) y[i]) + carry;
+                --xIndex;
+                result[index] += ((long) x[xIndex]) * ((long) y[i]) + carry;
                 carry = result[index] / div;
                 result[index] %= div;
 
